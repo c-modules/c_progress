@@ -1,0 +1,67 @@
+name: Cross-Platform Build & Test
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'src/**'
+      - 'include/**'
+      - 'examples/**'
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'include/**'
+      - 'examples/**'
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
+jobs:
+  build-and-test:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Linux GCC
+            os: ubuntu-latest
+            cc: gcc
+
+          - name: Linux Clang
+            os: ubuntu-latest
+            cc: clang
+
+          - name: Windows MSVC
+            os: windows-latest
+
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: Configure CMake (Unix)
+      if: runner.os != 'Windows'
+      run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=ON
+      env:
+        CC: ${{ matrix.cc }}
+
+    - name: Configure CMake (Windows)
+      if: runner.os == 'Windows'
+      run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=ON -G "Visual Studio 17 2022"
+
+    - name: Build
+      run: cmake --build build --config Release
+
+    - name: Run Tests
+      working-directory: build
+      run: ctest -C Release --output-on-failure --output-junit test-results.xml
+
+    - name: Publish Test Results
+      uses: dorny/test-reporter@v2
+      if: success() || failure()
+      with:
+        name: Tests (${{ matrix.name }})
+        path: build/test-results.xml
+        reporter: java-junit
