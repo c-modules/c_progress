@@ -1,2 +1,2 @@
-# c_progress
+# C Progress
 A colorful, lightweight progress bar for C.
