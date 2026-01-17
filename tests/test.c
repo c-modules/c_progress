@@ -5,4 +5,3 @@ int main(void)
     CPB_ProgressBar progress_bar;
     return 0;
 }
-

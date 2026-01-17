@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "c_progress_bar.h"
 #include "internal/utils.h"
 
 #ifdef _WIN32

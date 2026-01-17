@@ -8,6 +8,7 @@
 #ifndef C_PROGRESS_BAR_H
 #define C_PROGRESS_BAR_H
 
+#include <stdbool.h>
 #include <stddef.h>
 
 #ifndef CPB_VERSION
