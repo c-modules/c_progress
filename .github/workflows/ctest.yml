@@ -7,11 +7,13 @@ on:
       - 'src/**'
       - 'include/**'
       - 'examples/**'
+      - 'tests/**'
   pull_request:
     paths:
       - 'src/**'
       - 'include/**'
       - 'examples/**'
+      - 'tests/**'
 
 permissions:
   contents: read
