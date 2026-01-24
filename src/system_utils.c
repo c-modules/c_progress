@@ -1,6 +1,6 @@
 /**
- * \file utils.c
- * \brief Utility functions for C Progress Bar library.
+ * \file system_utils.c
+ * \brief System utility functions for C Progress Bar library.
  *
  * \author Ching-Yin Ng
  */
@@ -12,7 +12,7 @@
 #include <string.h>
 
 #include "c_progress_bar.h"
-#include "internal/utils.h"
+#include "internal/system_utils.h"
 
 #ifdef _WIN32
 #include <io.h>
@@ -22,6 +22,7 @@
 #else
 #include <langinfo.h>
 #include <sys/ioctl.h>
+#include <time.h>
 #include <unistd.h>
 #define ISATTY isatty
 #define FILENO fileno
@@ -95,7 +96,7 @@ static bool terminal_supports_utf8(void)
         }
     }
     return false;
-#endif
+#endif /* _WIN32 */
 }
 
 bool should_use_utf8(FILE *stream)
@@ -166,7 +167,7 @@ bool should_use_color(FILE *stream)
             return false; // Failed to enable ANSI support on this Windows console
         }
     }
-#endif
+#endif /* _WIN32 */
 
     return true;
 }
@@ -195,7 +196,7 @@ int get_terminal_width(FILE *stream)
     {
         return w.ws_col;
     }
-#endif
+#endif /* _WIN32 */
 
     /* Fallback */
 
@@ -207,4 +208,34 @@ int get_terminal_width(FILE *stream)
     }
 
     return CPB_DEFAULT_TERMINAL_WIDTH;
+}
+
+double get_timer_freq_inv(void)
+{
+#ifdef _WIN32
+    LARGE_INTEGER freq;
+    QueryPerformanceFrequency(&freq);
+    return 1.0 / (double)freq.QuadPart;
+#else
+    return 1.0;
+#endif /* _WIN32 */
+}
+
+double get_monotonic_time(const CPB_ProgressBar *restrict progress_bar)
+{
+#ifdef _WIN32
+    LARGE_INTEGER now;
+    QueryPerformanceCounter(&now);
+    return (double)now.QuadPart * progress_bar->_timer_freq_inv;
+
+#else
+    (void)progress_bar;
+    struct timespec ts;
+    if (clock_gettime(CLOCK_MONOTONIC, &ts) != 0)
+    {
+        return 0.0;
+    }
+
+    return (double)ts.tv_sec + ((double)ts.tv_nsec / 1e9);
+#endif /* _WIN32 */
 }

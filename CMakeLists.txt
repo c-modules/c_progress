@@ -15,7 +15,9 @@ option(BUILD_EXAMPLES "Build example executables" OFF)
 
 ### Library ###
 add_library(c_progress_bar STATIC
-    src/utils.c
+    src/c_progress_bar.c
+    src/math_utils.c
+    src/system_utils.c
 )
 add_library(c_progress_bar::c_progress_bar ALIAS c_progress_bar)
 

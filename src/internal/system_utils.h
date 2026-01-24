@@ -1,12 +1,12 @@
 /**
- * \file utils.h
- * \brief Utility functions for C Progress Bar library.
+ * \file system_utils.h
+ * \brief System utility functions for C Progress Bar library.
  *
  * \author Ching-Yin Ng
  */
 
-#ifndef C_PROGRESS_BAR_INTERNAL_UTILS_H
-#define C_PROGRESS_BAR_INTERNAL_UTILS_H
+#ifndef C_PROGRESS_BAR_INTERNAL_SYSTEM_UTILS_H
+#define C_PROGRESS_BAR_INTERNAL_SYSTEM_UTILS_H
 
 #include <stdbool.h>
 
@@ -34,4 +34,21 @@ bool should_use_color(FILE *stream);
  */
 int get_terminal_width(FILE *stream);
 
-#endif /* C_PROGRESS_BAR_INTERNAL_UTILS_H */
+/**
+ * \brief Get the inverse of the timer frequency (for Windows).
+ *
+ * \return The inverse of the timer frequency.
+ */
+double get_timer_freq_inv(void);
+
+/**
+ * \brief Get the current monotonic time in seconds.
+ *
+ * \param[in] progress_bar Pointer to the progress bar structure (for timer frequency on
+ * Windows).
+ *
+ * \return The current monotonic time in seconds.
+ */
+double get_monotonic_time(const CPB_ProgressBar *restrict progress_bar);
+
+#endif /* C_PROGRESS_BAR_INTERNAL_SYSTEM_UTILS_H */

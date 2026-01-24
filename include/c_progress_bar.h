@@ -10,6 +10,7 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 
 #ifndef CPB_VERSION
 #define CPB_VERSION "Unknown"
@@ -23,15 +24,27 @@
 
 typedef struct CPB_ProgressBar
 {
-    size_t start;
-    size_t total;
+    int64_t start;
+    int64_t total;
+    int64_t current;
 
-    bool is_completed;
+    bool is_started;
+    bool is_finished;
 
-    size_t unique_updates_count;
-    double time_last_update;
-    double time_diff_last_ten_unique_update[10];
-    double last_ten_unique_progress_percent[10];
+    int64_t unique_updates_count;
+    int32_t window_index;
+    double time_start;
+    double eta_time_last_update;
+    double eta_percent_last_update;
+    double eta_time_diffs[5];
+    double eta_percent_diffs[5];
+
+    // For monotonic time calculation on Windows
+    double _timer_freq_inv;
+
+    /* Custom settings */
+    double max_percent;
+    double min_refresh_time;
 } CPB_ProgressBar;
 
 /**
@@ -39,5 +52,10 @@ typedef struct CPB_ProgressBar
  *        compilation date, and configurations.
  */
 // void cpb_print_compilation_info(void);
+
+void cpb_init(CPB_ProgressBar *restrict progress_bar, int64_t start, int64_t total);
+void cpb_start(CPB_ProgressBar *restrict progress_bar);
+void cpb_update(CPB_ProgressBar *restrict progress_bar, int64_t current);
+void cpb_finish(CPB_ProgressBar *restrict progress_bar);
 
 #endif /* C_PROGRESS_BAR_H */
