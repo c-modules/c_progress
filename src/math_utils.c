@@ -26,6 +26,5 @@ double calculate_percentage(const CPB_ProgressBar *restrict progress_bar)
     }
 
     const double percentage = ((double)current / (double)total) * 100.0;
-    return percentage > progress_bar->max_percent ? progress_bar->max_percent
-                                                  : percentage;
+    return percentage;
 }
