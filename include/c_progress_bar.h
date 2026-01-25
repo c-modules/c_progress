@@ -22,9 +22,14 @@
 // Default output width when printing to file
 #define CPB_DEFAULT_FILE_WIDTH 120
 
+// Number of data points to keep for timer calculations
+#define CPB_TIMER_DATA_POINTS 5
+
 typedef struct CPB_Config
 {
     double min_refresh_time;
+
+    double timer_remaining_time_recent_weight;
 } CPB_Config;
 typedef struct CPB_ProgressBar
 {
@@ -39,13 +44,12 @@ typedef struct CPB_ProgressBar
 
     struct
     {
-        int64_t unique_updates_count;
-        int32_t window_index;
+        int64_t updates_count;
         double time_start;
         double timer_time_last_update;
-        double timer_percent_last_update;
-        double timer_time_diffs[5];
-        double timer_percent_diffs[5];
+        double timer_percentage_last_update;
+        double timer_time_diffs[CPB_TIMER_DATA_POINTS];
+        double timer_percentage_diffs[CPB_TIMER_DATA_POINTS];
 
         // For monotonic time calculation on Windows
         double _timer_freq_inv;
