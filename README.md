@@ -30,7 +30,12 @@ int main(void)
 
     // Setup progress bar
     CPB_Config config = cpb_get_default_config();
-    config.description = "Processing";
+    config.description = "Processing";                // Default: ""
+    config.min_refresh_time = 0.1;                    // Minimum refresh time in seconds. Default: 0.1.
+    config.timer_remaining_time_recent_weight = 0.3;  // Weight for recent rate in remaining time estimation. Range: [0, 1]. Default: 0.3.
+
+    // You don't need to modify anything for CPB_ProgressBar.
+    // Just call cpb_init
     CPB_ProgressBar progress_bar;
     cpb_init(&progress_bar, 0, N, config);
 
